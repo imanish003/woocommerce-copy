@@ -26,6 +26,12 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Setup WooCommerce Monorepo
+              uses: ./.github/actions/setup-woocommerce-monorepo
+              with:
+                  install: '@woocommerce/plugin-woocommerce...'
+                  build: '@woocommerce/plugin-woocommerce'
+
             - name: Install Playwright dependencies
               run: pnpm exec playwright install chromium --with-deps
 
