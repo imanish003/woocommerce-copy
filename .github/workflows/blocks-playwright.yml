@@ -16,17 +16,12 @@ env:
 
 jobs:
     blocks-playwright-tests:
-        name: Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
+        name: Playwright E2E tests
         timeout-minutes: 60
         runs-on: ubuntu-latest
         defaults:
             run:
                 working-directory: plugins/woocommerce-blocks
-        strategy:
-            fail-fast: false
-            matrix:
-                shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                shardTotal: [10]
 
         steps:
             - uses: actions/checkout@v4
@@ -57,7 +52,7 @@ jobs:
     merge-artifacts:
         # Merges all artifacts from all shards into a single zip and
         # deletes the parts. In case of a rerun, artifacts from the
-        # previous run will be retained by merging them with the new ones. 
+        # previous run will be retained by merging them with the new ones.
         name: Merge Artifacts
         if: ${{ !cancelled() }}
         needs: [blocks-playwright-tests]
