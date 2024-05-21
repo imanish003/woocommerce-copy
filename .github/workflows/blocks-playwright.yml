@@ -26,20 +26,11 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup WooCommerce Monorepo
-              uses: ./.github/actions/setup-woocommerce-monorepo
-              with:
-                  install: '@woocommerce/plugin-woocommerce...'
-                  build: '@woocommerce/plugin-woocommerce'
-
             - name: Install Playwright dependencies
               run: pnpm exec playwright install chromium --with-deps
 
-            - name: Setup testing environment and start the server
-              run: pnpm env:start
-
             - name: Run Playwright tests
-              run: pnpm test:e2e --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+              run: pnpm test:e2e
 
             - name: Archive debug artifacts (screenshots, traces)
               uses: actions/upload-artifact@v4
