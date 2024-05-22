@@ -91,6 +91,7 @@ jobs:
         name: Debug value of has-flaky-test-report
         needs: [merge-artifacts]
         runs-on: ubuntu-latest
+        if: ${{ !cancelled() }}
         steps:
             - name: Output
               run: |
@@ -99,6 +100,7 @@ jobs:
     create-github-issues-for-flaky-tests:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
+        if: ${{ !cancelled() }}
         runs-on: ubuntu-latest
         steps:
             # We are using @wordpress/report-flaky-tests package
