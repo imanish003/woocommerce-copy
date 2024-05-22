@@ -65,6 +65,8 @@ jobs:
         if: ${{ !cancelled() }}
         needs: [blocks-playwright-tests]
         runs-on: ubuntu-latest
+        outputs:
+            has-flaky-test-report: ${{ !!steps.merge-flaky-tests-reports.outputs.artifact-id }}
         steps:
             - name: Merge Artifacts
               uses: actions/upload-artifact/merge@v4
@@ -83,3 +85,34 @@ jobs:
                   name: flaky-tests-report
                   pattern: flaky-tests-report*
                   delete-merged: true
+
+    create-github-issues-for-flaky-tests:
+        name: Create GitHub issues for flaky tests
+        needs: [merge-artifacts]
+        runs-on: ubuntu-latest
+        if: ${{ needs.merge-artifacts.outputs.has-flaky-test-report == 'true' }}
+        steps:
+            # We are using @wordpress/report-flaky-tests package
+            # to create GitHub issues for flaky tests from Gutenberg repo.
+            - uses: actions/checkout@v4
+              with:
+                  repository: WordPress/gutenberg
+                  ref: trunk
+
+            - name: Use desired version of NodeJS
+              uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: npm
+
+            - name: Npm install and build
+              # TODO: We don't have to build the entire project, just the action itself.
+              run: |
+                  npm ci
+                  npm run build:packages
+            - name: Report flaky tests
+              uses: ./packages/report-flaky-tests
+              with:
+                  repo-token: '${{ secrets.GITHUB_TOKEN }}'
+                  label: 'type: flaky test'
+                  artifact-name-prefix: flaky-tests-report
