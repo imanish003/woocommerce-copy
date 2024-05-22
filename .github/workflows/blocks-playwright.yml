@@ -121,9 +121,17 @@ jobs:
               run: |
                   npm ci
                   npm run build:packages
+
+            - uses: actions/download-artifact@v4.1.7
+              # Don't fail the job if there isn't any flaky tests report.
+              continue-on-error: true
+              with:
+                  name: flaky-tests-report
+                  path: flaky-tests
+
             - name: Report flaky tests
               uses: ./packages/report-flaky-tests
               with:
                   repo-token: '${{ secrets.GITHUB_TOKEN }}'
-                  label: 'type: flaky test'
-                  artifact-name-prefix: flaky-tests-report
+                  label: 'metric: flaky e2e test'
+                  artifact-path: flaky-tests
