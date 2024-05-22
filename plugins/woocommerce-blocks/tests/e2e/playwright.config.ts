@@ -23,13 +23,7 @@ const config: PlaywrightTestConfig = {
 	// Don't report slow test "files", as we're running our tests in serial.
 	reportSlowTests: null,
 	reporter: process.env.CI
-		? [
-				[ 'github' ],
-				[ 'list' ],
-				[
-					'./plugins/woocommerce-blocks/tests/e2e/flaky-tests-reporter.ts',
-				],
-		  ]
+		? [ [ 'github' ], [ 'list' ], [ './flaky-tests-reporter.ts' ] ]
 		: 'list',
 	use: {
 		baseURL: BASE_URL,
