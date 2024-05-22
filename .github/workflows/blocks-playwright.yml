@@ -45,8 +45,16 @@ jobs:
               uses: actions/upload-artifact@v4
               if: ${{ !cancelled() }}
               with:
-                  name: failures-artifacts-shard-${{ matrix.shardIndex }}
+                  name: failures-artifacts-shard
                   path: plugins/woocommerce-blocks/tests/e2e/artifacts/test-results
+                  if-no-files-found: ignore
+
+            - name: Archive flaky tests report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: flaky-tests-report
+                  path: flaky-tests
                   if-no-files-found: ignore
 
     merge-artifacts:
@@ -64,4 +72,13 @@ jobs:
               continue-on-error: true
               with:
                   name: failures-artifacts
+                  delete-merged: true
+
+            - name: Merge flaky tests reports
+              id: merge-flaky-tests-reports
+              uses: actions/upload-artifact/merge@v4
+              continue-on-error: true
+              with:
+                  name: flaky-tests-report
+                  pattern: flaky-tests-report*
                   delete-merged: true
