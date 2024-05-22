@@ -54,7 +54,7 @@ jobs:
               if: ${{ !cancelled() }}
               with:
                   name: flaky-tests-report
-                  path: flaky-tests
+                  path: plugins/woocommerce-blocks/flaky-tests
                   if-no-files-found: ignore
 
     merge-artifacts:
