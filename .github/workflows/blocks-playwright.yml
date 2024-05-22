@@ -56,6 +56,7 @@ jobs:
                   name: flaky-tests-report-1
                   path: plugins/woocommerce-blocks/flaky-tests
                   if-no-files-found: ignore
+                  overwrite: true
 
     merge-artifacts:
         # Merges all artifacts from all shards into a single zip and
@@ -66,7 +67,7 @@ jobs:
         needs: [blocks-playwright-tests]
         runs-on: ubuntu-latest
         outputs:
-            has-flaky-test-report: ${{ !!steps.merge-flaky-tests-reports.outputs.artifact-id }}
+            has-flaky-test-report: 'true'
         steps:
             - name: Merge Artifacts
               uses: actions/upload-artifact/merge@v4
