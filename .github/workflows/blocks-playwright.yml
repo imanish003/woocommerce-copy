@@ -87,16 +87,6 @@ jobs:
                   pattern: flaky-tests-report*
                   delete-merged: true
 
-    debug-output:
-        name: Debug value of has-flaky-test-report
-        needs: [merge-artifacts]
-        runs-on: ubuntu-latest
-        if: ${{ !cancelled() }}
-        steps:
-            - name: Output
-              run: |
-                  echo "Has flaky test report: ${{ needs.merge-artifacts.outputs.has-flaky-test-report }}"
-
     create-github-issues-for-flaky-tests:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
