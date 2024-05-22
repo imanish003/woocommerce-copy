@@ -91,7 +91,6 @@ jobs:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
         runs-on: ubuntu-latest
-        if: ${{ needs.merge-artifacts.outputs.has-flaky-test-report == 'true' }}
         steps:
             # We are using @wordpress/report-flaky-tests package
             # to create GitHub issues for flaky tests from Gutenberg repo.
