@@ -49,11 +49,11 @@ jobs:
                   path: plugins/woocommerce-blocks/tests/e2e/artifacts/test-results
                   if-no-files-found: ignore
 
-            - name: Archive flaky tests report
+            - name: Archive flaky test reports
               uses: actions/upload-artifact@v4
               if: ${{ !cancelled() }}
               with:
-                  name: flaky-tests-report
+                  name: flaky-tests-report-1
                   path: plugins/woocommerce-blocks/flaky-tests
                   if-no-files-found: ignore
 
