@@ -17,6 +17,15 @@ test( 'Flaky test', async ( { page }, testInfo ) => {
 	expect( true ).toBeTruthy();
 } );
 
+test( 'Another flaky test', async ( { page }, testInfo ) => {
+	await page.goto( 'https://example.com' );
+	// Introduce flakiness
+	if ( testInfo.retry < 2 ) {
+		throw new Error( 'This is another flaky test.' );
+	}
+	expect( true ).toBeTruthy();
+} );
+
 test( 'Always failing test', async ( { page } ) => {
 	await page.goto( 'https://example.com' );
 	expect( false ).toBeTruthy();
