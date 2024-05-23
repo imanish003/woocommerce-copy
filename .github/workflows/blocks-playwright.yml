@@ -90,7 +90,7 @@ jobs:
     create-github-issues-for-flaky-tests:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
-        if: ${{ !cancelled() }}
+        if: github.event.pull_request.draft == false && !cancelled()
         runs-on: ubuntu-latest
         steps:
             # We are using @wordpress/report-flaky-tests package
