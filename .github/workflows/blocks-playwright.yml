@@ -67,7 +67,7 @@ jobs:
         needs: [blocks-playwright-tests]
         runs-on: ubuntu-latest
         outputs:
-            has-flaky-test-report: 'true'
+            has-flaky-test-report: ${{ !!steps.merge-flaky-tests-reports.outputs.artifact-id }}
         steps:
             - name: Merge Artifacts
               uses: actions/upload-artifact/merge@v4
@@ -90,7 +90,7 @@ jobs:
     create-github-issues-for-flaky-tests:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
-        if: github.event.pull_request.draft == false && !cancelled()
+        if: github.event.pull_request.draft == false && !cancelled() && needs.merge-artifacts.outputs.has-flaky-test-report == 'true'
         runs-on: ubuntu-latest
         steps:
             # We are using @wordpress/report-flaky-tests package
