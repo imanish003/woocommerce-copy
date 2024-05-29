@@ -10,6 +10,10 @@ on:
             - 'plugins/woocommerce/patterns/**'
     # Allow manually triggering the workflow.
     workflow_dispatch:
+    # Run workflow when a PR is merged to trunk branch
+    push:
+        branches:
+            - trunk
 
 concurrency:
     group: '${{ github.workflow }}-${{ github.ref }}'
@@ -98,7 +102,8 @@ jobs:
     create-github-issues-for-flaky-tests:
         name: Create GitHub issues for flaky tests
         needs: [merge-artifacts]
-        if: ${{ !cancelled() && needs.merge-artifacts.outputs.has-flaky-test-report == 'true' }}
+        # Run only if the workflow is triggered by a push to trunk branch i.e. PR merge.
+        if: ${{ github.ref == 'refs/heads/trunk' && !cancelled() && needs.merge-artifacts.outputs.has-flaky-test-report == 'true' }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
