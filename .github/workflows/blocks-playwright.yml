@@ -136,5 +136,5 @@ jobs:
               uses: ./packages/report-flaky-tests
               with:
                   repo-token: '${{ secrets.GITHUB_TOKEN }}'
-                  label: 'metric: flaky e2e test, bug, good first issue'
+                  label: 'metric: flaky e2e test'
                   artifact-path: flaky-tests
