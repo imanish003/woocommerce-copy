@@ -10,6 +10,14 @@ on:
             - 'plugins/woocommerce/patterns/**'
     # Allow manually triggering the workflow.
     workflow_dispatch:
+    # Run workflow when a PR is merged to trunk branch
+    push:
+        branches:
+            - trunk
+
+concurrency:
+    group: '${{ github.workflow }}-${{ github.ref }}'
+    cancel-in-progress: true
 
 env:
     FORCE_COLOR: 1
@@ -54,24 +62,33 @@ jobs:
                   path: plugins/woocommerce-blocks/tests/e2e/artifacts/test-results
                   if-no-files-found: ignore
 
+            - name: Archive flaky test reports
+              uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+              if: ${{ !cancelled() }}
+              with:
+                  name: flaky-tests-report--${{ matrix.shardIndex }}
+                  path: plugins/woocommerce-blocks/flaky-tests
+                  if-no-files-found: ignore
+
     merge-artifacts:
         # Merges all artifacts from all shards into a single zip and
         # deletes the parts. In case of a rerun, artifacts from the
-        # previous run will be retained by merging them with the new ones. 
+        # previous run will be retained by merging them with the new ones.
         name: Merge Artifacts
         if: ${{ !cancelled() }}
         needs: [blocks-playwright-tests]
         runs-on: ubuntu-latest
+        outputs:
+            has-flaky-test-report: ${{ !!steps.merge-flaky-tests-reports.outputs.artifact-id }}
         steps:
-            - name: Merge Artifacts
+            - name: Merge failures artifacts
               uses: actions/upload-artifact/merge@v4
               # Don't fail the job if there aren't any artifacts to merge.
               continue-on-error: true
               with:
                   name: failures-artifacts
+                  pattern: failures-artifacts*
                   delete-merged: true
-<<<<<<< Updated upstream
-=======
 
             - name: Merge flaky tests reports
               id: merge-flaky-tests-reports
@@ -121,4 +138,3 @@ jobs:
                   repo-token: '${{ secrets.GITHUB_TOKEN }}'
                   label: 'metric: flaky e2e test, bug, good first issue'
                   artifact-path: flaky-tests
->>>>>>> Stashed changes
